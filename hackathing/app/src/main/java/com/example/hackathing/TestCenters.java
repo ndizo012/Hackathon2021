@@ -5,7 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class TestCenters {
-    JSONArray locations;
+    private JSONArray locations;
 
     public TestCenters(JSONArray locations){
         this.locations = locations;
