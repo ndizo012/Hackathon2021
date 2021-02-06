@@ -3,11 +3,15 @@ package com.example.hackathing;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,8 +24,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
+public class MainActivity extends AppCompatActivity {
+    double latitude;
+    double longitude;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +65,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OnOpenInGoogleMaps (View view) {
+
         EditText teamAddres = (EditText) findViewById(R.id.addr);
 
+//        String locationName = teamAddres + ", " + "Canada";
+//        Geocoder geoCoder = new Geocoder(getBaseContext(), Locale.getDefault());
+//        try {
+//            List<Address> address = geoCoder.getFromLocationName(locationName, 1);
+//           latitude = address.get(0).getLatitude();
+//           longitude = address.get(0).getLongitude();
+//           Log.d("simon", String.valueOf(latitude));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Log.d("simon",e.toString());
+//        }
+
+        Geocoder geoCoder = new Geocoder(this);
+        String a = teamAddres.getText().toString();
+        Log.d("simon", "wjdw");
+        Log.d("simon", a);
+        try {
+            List<Address> addresses = geoCoder.getFromLocationName(a + ", " + "Canada", 1);
+            if (addresses != null) {
+                Address address = addresses.get(0);
+                // Use the address as needed
+                String message = String.format("Latitude: %f, Longitude: %f",
+                        address.getLatitude(), address.getLongitude());
+                Log.d("simon", message);
+                latitude = address.getLatitude();
+                longitude = address.getLongitude();
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                Log.d("simon", String.valueOf(latitude));
+                Log.d("simon", String.valueOf(longitude));
+            } else {
+                // Display appropriate message when Geocoder services are not available
+                Toast.makeText(this, "Unable to geocode zipcode", Toast.LENGTH_LONG).show();
+            }
+        } catch (IOException e) {
+            // handle exception
+            Log.d("simon",e.toString());
+        }
+        
         Uri gmmIntentUri = Uri.parse("http://maps.google.co.in/maps?q="+teamAddres.getText());
 
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
@@ -66,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(mapIntent);
     }
+
+
 
 
 }
