@@ -2,6 +2,25 @@
     <string name="app_name">hackathing</string>
 
     <string name="hackAThing">Hack A Thing 2021!!!</string>
-    <string name="address">Enter Address</string>
-    <string name="searchButton">Search</string>
+
+    <!-- search functionality -->
+    <string name="address">Enter Postal Code</string>
+    <string name="searchButton">Open in Google Maps</string>
+    <string name="statsButton">Search</string>
+
+    <!-- closest clinic -->
+    <string name="clinic">Closest Clinic</string>
+    <string name="facility">Facility: </string>
+    <string name="facilityAddress">Address: </string>
+    <string name="distance">distance to facility: </string>
+    <string name="hours">hours of operation: </string>
+    <string name="contact">phone number: </string>
+    <string name="previous"> previous </string>
+    <string name="next"> next </string>
+
+    <!-- for local area stats -->
+    <string name="localAreaStats">Local Area Statistics</string>
+    <string name="activeCases">Active Cases: </string>
+    <string name="deaths">Deaths: </string>
+    <string name="recovered">Total Recoveries: </string>
 </resources>
