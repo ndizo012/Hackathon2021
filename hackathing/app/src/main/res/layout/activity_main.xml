@@ -58,6 +58,7 @@
             android:layout_height="15dp" />
 
         <ListView
+            android:id="@+id/clinicInfoList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -66,27 +67,29 @@
             android:layout_height="15dp" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="4.0dip"
+            android:paddingRight="5.0dip"
+
+            >
 
             <Button
                 android:id="@+id/previousButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_weight="1.0"
                 android:text="@string/previous" />
 
-            <Space
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
             <Button
-                android:id="@+id/button4"
-                android:layout_width="wrap_content"
+                android:id="@+id/nextButton"
+                android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_weight="1.0"
                 android:text="@string/next" />
 
         </LinearLayout>
@@ -112,6 +115,7 @@
             android:textSize="24sp" />
 
         <ListView
+            android:id="@+id/statsList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

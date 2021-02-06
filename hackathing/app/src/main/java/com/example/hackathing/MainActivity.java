@@ -10,8 +10,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -24,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
     double latitude;
     double longitude;
 
+    ListView clinicInfoList;
+    ArrayList<String> clinicInfo;
+    ListView statsList;
+    ArrayList<String> localStats;
+    Button searchButton;
+    Button previousButton;
+    Button nextButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +55,21 @@ public class MainActivity extends AppCompatActivity {
         // Instantiate the RequestQueue and make api call
         requestQueue = VolleyController.getInstance(this.getApplicationContext()).getRequestQueue();
         new testCenterRequest().execute();
+
+        //clinic info to display in list
+        clinicInfoList = (ListView) findViewById(R.id.clinicInfoList);
+        clinicInfo = new ArrayList<>();
+        clinicInfo.add("Enter postal code to find nearest COVID-19 clinic");
+        clinicInfo.add("testing1");
+        final ArrayAdapter<String> adapterClinicInfo = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, clinicInfo);
+        clinicInfoList.setAdapter(adapterClinicInfo);
+
+        // area stats to display in list
+        statsList = (ListView) findViewById(R.id.statsList);
+        localStats = new ArrayList<>();
+        localStats.add("local stats");
+        final ArrayAdapter<String> adapterStats = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, localStats);
+        statsList.setAdapter(adapterStats);
     }
 
     public void OnOpenInGoogleMaps (View view) {
