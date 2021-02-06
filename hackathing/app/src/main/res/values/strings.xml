@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">hackathing</string>
+
+    <string name="hackAThing">Hack A Thing 2021!!!</string>
+    <string name="address">Enter Address</string>
+    <string name="searchButton">Search</string>
 </resources>
