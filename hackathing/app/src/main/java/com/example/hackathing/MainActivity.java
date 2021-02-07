@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,12 +29,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     static TestCenters testCenters;
+    static ProvinceInformation provinceInformation;
     static RequestQueue requestQueue;
 
     static double latitude;
@@ -54,24 +52,36 @@ public class MainActivity extends AppCompatActivity {
     static String nameof;
     static String addre;
     static int [] ind = new int[148];
-
+    static Button searchButton;
+    static Button searchGoogleMap;
+    static Button previousButton;
+    static Button nextButton;
 
     ListView clinicInfoList;
     ArrayList<String> clinicInfo;
     ListView statsList;
     ArrayList<String> localStats;
-    Button searchButton;
-    Button previousButton;
-    Button nextButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Instantiate the RequestQueue and make api call
+        //Disable buttons until API calls are finalized
+        searchButton = (Button) findViewById(R.id.searchButton);;
+        searchGoogleMap = (Button) findViewById(R.id.searchGoogleMap);
+        previousButton = (Button) findViewById(R.id.previousButton);
+        nextButton = (Button) findViewById(R.id.nextButton);
+
+        searchButton.setEnabled(false);
+        searchGoogleMap.setEnabled(false);
+        previousButton.setEnabled(false);
+        nextButton.setEnabled(false);
+
+        // Instantiate the RequestQueue and make api calls for information
         requestQueue = VolleyController.getInstance(this.getApplicationContext()).getRequestQueue();
         new testCenterRequest().execute();
+        new provinceInfoRequest().execute();
 
         //clinic info to display in list
         clinicInfoList = (ListView) findViewById(R.id.clinicInfoList);
@@ -95,8 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
         Geocoder geoCoder = new Geocoder(this);
         String a = teamAddres.getText().toString();
-        Log.d("simon", "wjdw");
-        Log.d("simon", a);
+
         try {
             List<Address> addresses = geoCoder.getFromLocationName(a + ", " + "Canada", 1);
             if (addresses != null) {
@@ -104,41 +113,25 @@ public class MainActivity extends AppCompatActivity {
                 // Use the address as needed
                 String message = String.format("Latitude: %f, Longitude: %f",
                         address.getLatitude(), address.getLongitude());
-                Log.d("simon", message);
                 latitude = address.getLatitude();
                 longitude = address.getLongitude();
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-                Log.d("simon", String.valueOf(latitude));
-                Log.d("simon", String.valueOf(longitude));
             } else {
                 // Display appropriate message when Geocoder services are not available
                 Toast.makeText(this, "Unable to geocode zipcode", Toast.LENGTH_LONG).show();
             }
 
-
             JSONObject jsonOb;
-            //longitude = -75.6950;
-            //latitude = 45.424721;
-
-            try {
-
-
-                for(int i = 0; i < 149; i++){
-                    jsonOb = MainActivity.testCenters.getCoordinates(i);
-                    hosLong = jsonOb.getDouble("x");
-                    hosLat = jsonOb.getDouble("y");
-                    double p = Math.PI/180;
-                    double aa = 0.5-Math.cos((hosLat - latitude)*p)/2+Math.cos(latitude*p)*Math.cos(hosLat*p)*(1-Math.cos((hosLong-longitude)*p))/2;
-                    x[i]=12742*Math.asin(Math.sqrt(aa));
-                    xcl[i]=12742*Math.asin(Math.sqrt(aa));
-                    Log.d("Bille", String.valueOf(longitude));
-                    Log.d("Bille", String.valueOf(latitude));
-
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-
+            for(int i = 0; i < 149; i++) {
+                jsonOb = MainActivity.testCenters.getCoordinates(i);
+                hosLong = jsonOb.getDouble("x");
+                hosLat = jsonOb.getDouble("y");
+                double p = Math.PI / 180;
+                double aa = 0.5 - Math.cos((hosLat - latitude) * p) / 2 + Math.cos(latitude * p) * Math.cos(hosLat * p) * (1 - Math.cos((hosLong - longitude) * p)) / 2;
+                x[i] = 12742 * Math.asin(Math.sqrt(aa));
+                xcl[i] = 12742 * Math.asin(Math.sqrt(aa));
             }
+
             boolean sorted = false;
             double temp;
             while(!sorted){
@@ -160,26 +153,20 @@ public class MainActivity extends AppCompatActivity {
                         xdis[i]=x[j];
                     }
                 }
-
             }
+
             lowestV = xcl[0];
             lowest = ind[0];
             finalind = Arrays.copyOfRange(ind,0,9);
             finalDis = Arrays.copyOfRange(xdis,0,9);
-
-            Log.d("namee", MainActivity.testCenters.getName(finalind[0]));
-            Log.d("namee", MainActivity.testCenters.getAddress(finalind[0]));
-            Log.d("namee", MainActivity.testCenters.getHOP(finalind[0]));
-            Log.d("namee", MainActivity.testCenters.getNumber(finalind[0]));
-
-        } catch (IOException e) {
-            // handle exception
-            Log.d("simon",e.toString());
+        } catch (IOException | JSONException e) {
+                e.printStackTrace();
         }
+
         textView12.setText(nameof);
-
-
-
+        searchGoogleMap.setEnabled(true);
+        previousButton.setEnabled(true);
+        nextButton.setEnabled(true);
     }
 
     public void Next (View view){
@@ -187,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OnOpenInGoogleMaps (View view) {
-
 
         Uri gmmIntentUri = Uri.parse("http://maps.google.co.in/maps?q="+addre);
 
@@ -215,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject result = future.get();
                 MainActivity.testCenters = new TestCenters((JSONArray) result.get("features"));
-                Log.d("MyTag", String.valueOf(MainActivity.testCenters.numberOfTestCenters()));
                 output = "true";
             } catch (ExecutionException | JSONException | InterruptedException e) {
                 e.printStackTrace();
@@ -227,8 +212,39 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             //Put everything to do with accessing TestCenters here
+            MainActivity.searchButton.setEnabled(true);
+        }
+    }
 
+    //Method for making the initial API call to fetch all of the province information
+    //Info stored in provinceInformation object in Main Activity
+    private static class provinceInfoRequest extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String url = "https://opencovid.ca/api/";
+            String output;
+            RequestFuture<JSONObject> future = RequestFuture.newFuture();
 
+            // Request a string response from the provided URL.
+            JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, future, future);
+            // Add the request to the RequestQueue.
+            MainActivity.requestQueue.add(stringRequest);
+
+            try {
+                JSONObject result = future.get();
+                MainActivity.provinceInformation = new ProvinceInformation((JSONArray) result.get("summary"));
+                output = "true";
+            } catch (ExecutionException | JSONException | InterruptedException e) {
+                e.printStackTrace();
+                output = "false";
+            }
+            return output;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //Put everything to do with accessing TestCenters here
+            MainActivity.searchButton.setEnabled(true);
         }
     }
 }
