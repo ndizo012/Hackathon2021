@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -58,9 +59,12 @@ public class MainActivity extends AppCompatActivity {
     static Button nextButton;
 
     ListView clinicInfoList;
-    ArrayList<String> clinicInfo;
+    ArrayList<String> clinicInfo= new ArrayList<>();
+
     ListView statsList;
     ArrayList<String> localStats;
+
+    int counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         searchButton.setEnabled(false);
         searchGoogleMap.setEnabled(false);
         previousButton.setEnabled(false);
-        nextButton.setEnabled(false);
+
 
         // Instantiate the RequestQueue and make api calls for information
         requestQueue = VolleyController.getInstance(this.getApplicationContext()).getRequestQueue();
@@ -85,9 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         //clinic info to display in list
         clinicInfoList = (ListView) findViewById(R.id.clinicInfoList);
-        clinicInfo = new ArrayList<>();
         clinicInfo.add("Enter postal code to find nearest COVID-19 clinic");
-        clinicInfo.add("testing1");
         final ArrayAdapter<String> adapterClinicInfo = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, clinicInfo);
         clinicInfoList.setAdapter(adapterClinicInfo);
 
@@ -97,6 +99,39 @@ public class MainActivity extends AppCompatActivity {
         localStats.add("local stats");
         final ArrayAdapter<String> adapterStats = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, localStats);
         statsList.setAdapter(adapterStats);
+
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counter == 10){
+                    nextButton.setEnabled(false);
+                }
+                counter++;
+                clinicInfo.clear();
+
+                adapterClinicInfo.notifyDataSetChanged();
+                previousButton.setEnabled(true);
+            }
+        });
+
+        previousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counter == 0){
+                    previousButton.setEnabled(false);
+                }
+                else{
+                    counter--;
+                    clinicInfo.clear();
+
+                    adapterClinicInfo.notifyDataSetChanged();
+                    nextButton.setEnabled(true);
+                }
+            }
+        });
+
+
     }
 
     public void Search (View view){
@@ -169,9 +204,6 @@ public class MainActivity extends AppCompatActivity {
         nextButton.setEnabled(true);
     }
 
-    public void Next (View view){
-
-    }
 
     public void OnOpenInGoogleMaps (View view) {
 
