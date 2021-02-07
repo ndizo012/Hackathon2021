@@ -1,5 +1,7 @@
 package com.example.hackathing;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,63 +79,28 @@ public class TestCenters {
         return  address;
     }
     public String getHOP(int number) {
+
+        java.util.Date date=new java.util.Date();
+        String day = date.toString().substring(0,3);
+        Log.d("wdwwe", day);
+
         JSONObject hopJson;
-        String mon;
-        String tue;
-        String wed;
-        String thu;
-        String fri;
-        String sat;
-        String sun;
-        String hop="";
+
         try {
             hopJson = (JSONObject) ((JSONObject) locations.get(number)).get("attributes");
-
-            if(hopJson.getString("USER_Mon").equals("null")){
-                mon = "Not Available";
-            }else{
-                mon = hopJson.getString("USER_Mon");
+            if(day.equals("Thu")){
+                day = "Thur";
             }
-            if(hopJson.getString("USER_Tue").equals("null")){
-                tue = "Not Available";
-            }else{
-                tue = hopJson.getString("USER_Tue");
-            }
-            if(hopJson.getString("USER_Wed").equals("null")){
-                wed = "Not Available";
-            }else{
-                wed = hopJson.getString("USER_Wed");
-            }
-            //wed = hopJson.getString("USER_Wed");
-            if(hopJson.getString("USER_Thur").equals("null")){
-                thu = "Not Available";
-            }else{
-                thu = hopJson.getString("USER_Thur");
-            }
-            if(hopJson.getString("USER_Fri").equals("null")){
-                fri = "Not Available";
-            }else{
-                fri= hopJson.getString("USER_Fri");
+            if(hopJson.getString("USER_" + day).equals("null")) {
+                return "Not Available";
+            }else {
+                return hopJson.getString("USER_" + day);
             }
 
-            //thu = hopJson.getString("USER_Thur");
-            //fri= hopJson.getString("USER_Fri");
-            if(hopJson.getString("USER_Sat").equals("null")){
-                sat = "Not Available";
-            }else{
-                sat = hopJson.getString("USER_Sat");
-            }
-            //sat = hopJson.getString("USER_Sat");
-            if(hopJson.getString("USER_Sun").equals("null")){
-                sun = "Not Available";
-            }else{
-                sun = hopJson.getString("USER_Sun");
-            }
-            hop = "Mon: "+mon+", "+"Tue: "+tue+", "+"Wed: "+wed+", "+"Thur: "+thu+", "+"Fri: "+fri+", "+"Sat: "+sat+", "+"Sun: "+sun;
         } catch (JSONException e) {
             hopJson = new JSONObject();
-            hop = new String();
+            return "you capping";
         }
-        return  hop;
+
     }
 }

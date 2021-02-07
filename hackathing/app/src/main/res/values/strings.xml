@@ -4,7 +4,7 @@
     <string name="hackAThing">Hack A Thing 2021!!!</string>
 
     <!-- search functionality -->
-    <string name="address">Enter Postal Code</string>
+    <string name="address">Please input valid postal code</string>
     <string name="searchButton">Open in Google Maps</string>
     <string name="statsButton">Search</string>
 

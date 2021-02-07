@@ -8,6 +8,7 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -104,14 +105,17 @@ public class MainActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (counter == 10){
+                if (counter == 8){
                     nextButton.setEnabled(false);
                 }
-                counter++;
-                clinicInfo.clear();
+                else {
+                    counter++;
+                    clinicInfo.clear();
+                    reloadList();
 
-                adapterClinicInfo.notifyDataSetChanged();
-                previousButton.setEnabled(true);
+                    adapterClinicInfo.notifyDataSetChanged();
+                    previousButton.setEnabled(true);
+                }
             }
         });
 
@@ -121,9 +125,10 @@ public class MainActivity extends AppCompatActivity {
                 if (counter == 0){
                     previousButton.setEnabled(false);
                 }
-                else{
+                else {
                     counter--;
                     clinicInfo.clear();
+                    reloadList();
 
                     adapterClinicInfo.notifyDataSetChanged();
                     nextButton.setEnabled(true);
@@ -157,16 +162,28 @@ public class MainActivity extends AppCompatActivity {
             }
 
             JSONObject jsonOb;
-            for(int i = 0; i < 149; i++) {
-                jsonOb = MainActivity.testCenters.getCoordinates(i);
-                hosLong = jsonOb.getDouble("x");
-                hosLat = jsonOb.getDouble("y");
-                double p = Math.PI / 180;
-                double aa = 0.5 - Math.cos((hosLat - latitude) * p) / 2 + Math.cos(latitude * p) * Math.cos(hosLat * p) * (1 - Math.cos((hosLong - longitude) * p)) / 2;
-                x[i] = 12742 * Math.asin(Math.sqrt(aa));
-                xcl[i] = 12742 * Math.asin(Math.sqrt(aa));
-            }
+            //longitude = -75.6950;
+            //latitude = 45.424721;
 
+            try {
+
+
+                for(int i = 0; i < 149; i++){
+                    jsonOb = MainActivity.testCenters.getCoordinates(i);
+                    hosLong = jsonOb.getDouble("x");
+                    hosLat = jsonOb.getDouble("y");
+                    double p = Math.PI/180;
+                    double aa = 0.5-Math.cos((hosLat - latitude)*p)/2+Math.cos(latitude*p)*Math.cos(hosLat*p)*(1-Math.cos((hosLong-longitude)*p))/2;
+                    x[i]=12742*Math.asin(Math.sqrt(aa));
+                    xcl[i]=12742*Math.asin(Math.sqrt(aa));
+                    Log.d("Bille", String.valueOf(longitude));
+                    Log.d("Bille", String.valueOf(latitude));
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
             boolean sorted = false;
             double temp;
             while(!sorted){
@@ -188,22 +205,57 @@ public class MainActivity extends AppCompatActivity {
                         xdis[i]=x[j];
                     }
                 }
-            }
 
+            }
             lowestV = xcl[0];
             lowest = ind[0];
             finalind = Arrays.copyOfRange(ind,0,9);
             finalDis = Arrays.copyOfRange(xdis,0,9);
-        } catch (IOException | JSONException e) {
-                e.printStackTrace();
-        }
+//
+//            Log.d("namee", MainActivity.testCenters.getName(finalind[0]));
+//            Log.d("namee", MainActivity.testCenters.getAddress(finalind[0]));
+//            Log.d("namee", MainActivity.testCenters.getHOP(finalind[0]));
+//            Log.d("namee", MainActivity.testCenters.getNumber(finalind[0]));
 
-        textView12.setText(nameof);
+
+
+        } catch (IOException e) {
+            // handle exception
+            Log.d("simon",e.toString());
+        }
+        nameof =  MainActivity.testCenters.getName(finalind[0]);
+        addre = MainActivity.testCenters.getAddress(finalind[0]);
+
+        reloadList();
+
+
+
+
+
+
+    }
+    public void reloadList (){
+
+
+        String hours = MainActivity.testCenters.getHOP(finalind[counter]);
+        String num = MainActivity.testCenters.getNumber(finalind[counter]);
+        java.util.Date date=new java.util.Date();
+        String day = date.toString().substring(0,3);
+        clinicInfo.clear();
+        String s =  MainActivity.testCenters.getName(finalind[counter]);
+        addre = MainActivity.testCenters.getAddress(finalind[counter]);
+        clinicInfo.add(s + "  " + addre);
+
+        clinicInfo.add(day + "'s Working Hour: " + hours);
+        clinicInfo.add("Phone #: " + num);
+
         searchGoogleMap.setEnabled(true);
         previousButton.setEnabled(true);
         nextButton.setEnabled(true);
-    }
 
+
+
+    }
 
     public void OnOpenInGoogleMaps (View view) {
 
