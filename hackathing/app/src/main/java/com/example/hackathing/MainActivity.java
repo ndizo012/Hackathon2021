@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity {
     static TestCenters testCenters;
     static RequestQueue requestQueue;
+
     static double latitude;
     static double longitude;
     static double hosLong;
@@ -46,11 +47,14 @@ public class MainActivity extends AppCompatActivity {
     static double [] x = new double[148];
     static double [] xcl = new double[148];
     static int [] finalind = new int [10];
+    static double [] finalDis = new double [10];
+    static double []xdis = new double[148];
     static int r = 6371;
     static int lowest;
     static String nameof;
     static String addre;
     static int [] ind = new int[148];
+
 
     ListView clinicInfoList;
     ArrayList<String> clinicInfo;
@@ -111,60 +115,63 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Unable to geocode zipcode", Toast.LENGTH_LONG).show();
             }
 
+
             JSONObject jsonOb;
-            JSONObject jsonOb2;
+            //longitude = -75.6950;
+            //latitude = 45.424721;
+
             try {
 
 
                 for(int i = 0; i < 149; i++){
                     jsonOb = MainActivity.testCenters.getCoordinates(i);
-
                     hosLong = jsonOb.getDouble("x");
                     hosLat = jsonOb.getDouble("y");
-                    //double dLat = (hosLat - latitude)*(Math.PI/180);
-                    //double dLon = (hosLong - longitude)*(Math.PI/180);
-                    //double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(latitude*(Math.PI/180)) * Math.cos(hosLat*(Math.PI/180))* Math.sin(dLon/2) * Math.sin(dLon/2);
-                    //double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                    //double d = r*c;
-                    //longitude = -75.695;
-                    //latitude = 45.424721;
                     double p = Math.PI/180;
                     double aa = 0.5-Math.cos((hosLat - latitude)*p)/2+Math.cos(latitude*p)*Math.cos(hosLat*p)*(1-Math.cos((hosLong-longitude)*p))/2;
-
-
                     x[i]=12742*Math.asin(Math.sqrt(aa));
-
+                    xcl[i]=12742*Math.asin(Math.sqrt(aa));
                     Log.d("Bille", String.valueOf(longitude));
                     Log.d("Bille", String.valueOf(latitude));
 
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                //JSONObject jsonOb = new JSONObject();
-                //output = "false";
-            }
-            lowestV = x[0];
-            //Arrays.sort(x);
-            //Log.d("hii", String.valueOf(x[0]));
-            for(int j = 0; j<x.length;j++){
 
-                if(lowestV > x[j]){
-                    lowestV = x[j];
-                    lowest = j;
+            }
+            boolean sorted = false;
+            double temp;
+            while(!sorted){
+                sorted = true;
+                for(int i = 0; i<x.length-1;i++){
+                    if(xcl[i]>xcl[i+1]){
+                        temp = xcl[i];
+                        xcl[i]=xcl[i+1];
+                        xcl[i+1]=temp;
+                        sorted = false;
+                    }
+                }
+            }
+
+            for(int i = 0; i<x.length-1;i++){
+                for(int j = 1; j<x.length;j++){
+                    if(xcl[i]==x[j]){
+                        ind[i]=j;
+                        xdis[i]=x[j];
+                    }
                 }
 
             }
-            Log.d("hii", String.valueOf(lowestV));
+            lowestV = xcl[0];
+            lowest = ind[0];
+            finalind = Arrays.copyOfRange(ind,0,9);
+            finalDis = Arrays.copyOfRange(xdis,0,9);
 
-            Log.d("hii", String.valueOf(lowest));
-            try {
-                jsonOb2 = MainActivity.testCenters.getName(lowest);
-                nameof = jsonOb2.getString("USER_Name");
-                addre = jsonOb2.getString("USER_Street");
-            }catch(JSONException e) {
-                e.printStackTrace();
-            }
-            Log.d("hiiiii", nameof);
+            Log.d("namee", MainActivity.testCenters.getName(finalind[0]));
+            Log.d("namee", MainActivity.testCenters.getAddress(finalind[0]));
+            Log.d("namee", MainActivity.testCenters.getHOP(finalind[0]));
+            Log.d("namee", MainActivity.testCenters.getNumber(finalind[0]));
+
         } catch (IOException e) {
             // handle exception
             Log.d("simon",e.toString());

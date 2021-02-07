@@ -25,6 +25,7 @@ public class TestCenters {
         }
         return  coordinateJson;
     }
+
     public String getName(int number) {
         JSONObject nameJson;
         String names;
@@ -37,6 +38,24 @@ public class TestCenters {
         }
         return  names;
     }
+    public String getNumber(int number) {
+        JSONObject numberJson;
+        String numbers="";
+        try {
+            numberJson = (JSONObject) ((JSONObject) locations.get(number)).get("attributes");
+            if(numberJson.getString("USER_Phone").equals("null")){
+                numbers = "Not Available";
+            }else{
+                numbers = numberJson.getString("USER_Phone");
+            }
+
+        } catch (JSONException e) {
+            numberJson = new JSONObject();
+            numbers = new String();
+        }
+        return  numbers;
+    }
+
     public String getAddress(int number) {
         JSONObject addressJson;
         String st;
@@ -69,13 +88,47 @@ public class TestCenters {
         String hop="";
         try {
             hopJson = (JSONObject) ((JSONObject) locations.get(number)).get("attributes");
-            mon = hopJson.getString("USER_Mon");
-            tue = hopJson.getString("USER_Tue");
-            wed = hopJson.getString("USER_Wed");
-            thu = hopJson.getString("USER_Thur");
-            fri= hopJson.getString("USER_Fri");
-            sat = hopJson.getString("USER_Sat");
-            sun = hopJson.getString("USER_Sun");
+
+            if(hopJson.getString("USER_Mon").equals("null")){
+                mon = "Not Available";
+            }else{
+                mon = hopJson.getString("USER_Mon");
+            }
+            if(hopJson.getString("USER_Tue").equals("null")){
+                tue = "Not Available";
+            }else{
+                tue = hopJson.getString("USER_Tue");
+            }
+            if(hopJson.getString("USER_Wed").equals("null")){
+                wed = "Not Available";
+            }else{
+                wed = hopJson.getString("USER_Wed");
+            }
+            //wed = hopJson.getString("USER_Wed");
+            if(hopJson.getString("USER_Thur").equals("null")){
+                thu = "Not Available";
+            }else{
+                thu = hopJson.getString("USER_Thur");
+            }
+            if(hopJson.getString("USER_Fri").equals("null")){
+                fri = "Not Available";
+            }else{
+                fri= hopJson.getString("USER_Fri");
+            }
+
+            //thu = hopJson.getString("USER_Thur");
+            //fri= hopJson.getString("USER_Fri");
+            if(hopJson.getString("USER_Sat").equals("null")){
+                sat = "Not Available";
+            }else{
+                sat = hopJson.getString("USER_Sat");
+            }
+            //sat = hopJson.getString("USER_Sat");
+            if(hopJson.getString("USER_Sun").equals("null")){
+                sun = "Not Available";
+            }else{
+                sun = hopJson.getString("USER_Sun");
+            }
             hop = "Mon: "+mon+", "+"Tue: "+tue+", "+"Wed: "+wed+", "+"Thur: "+thu+", "+"Fri: "+fri+", "+"Sat: "+sat+", "+"Sun: "+sun;
         } catch (JSONException e) {
             hopJson = new JSONObject();
@@ -83,6 +136,4 @@ public class TestCenters {
         }
         return  hop;
     }
-
-
 }
