@@ -36,8 +36,15 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity {
     static TestCenters testCenters;
     static RequestQueue requestQueue;
-    double latitude;
-    double longitude;
+    static double latitude;
+    static double longitude;
+    static double hosLong;
+    static double hosLat;
+    static double lowestV;
+    static double [] x = new double[148];
+    static int r = 6371;
+    static int lowest;
+    static String nameof;
 
     ListView clinicInfoList;
     ArrayList<String> clinicInfo;
@@ -151,6 +158,59 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             //Put everything to do with accessing TestCenters here
+            JSONObject jsonOb;
+            JSONObject jsonOb2;
+            try {
+
+
+                for(int i = 0; i < 149; i++){
+                    jsonOb = MainActivity.testCenters.getCoordinates(i);
+
+                    hosLong = jsonOb.getDouble("x");
+                    hosLat = jsonOb.getDouble("y");
+                    //double dLat = (hosLat - latitude)*(Math.PI/180);
+                    //double dLon = (hosLong - longitude)*(Math.PI/180);
+                    //double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(latitude*(Math.PI/180)) * Math.cos(hosLat*(Math.PI/180))* Math.sin(dLon/2) * Math.sin(dLon/2);
+                    //double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    //double d = r*c;
+                    //longitude = -75.695;
+                    //latitude = 45.424721;
+                    double p = Math.PI/180;
+                    double aa = 0.5-Math.cos((hosLat - latitude)*p)/2+Math.cos(latitude*p)*Math.cos(hosLat*p)*(1-Math.cos((hosLong-longitude)*p))/2;
+
+
+                    x[i]=12742*Math.asin(Math.sqrt(aa));
+
+                    Log.d("Bille", String.valueOf(longitude));
+                    Log.d("Bille", String.valueOf(latitude));
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                //JSONObject jsonOb = new JSONObject();
+                //output = "false";
+            }
+            lowestV = x[0];
+            //Arrays.sort(x);
+            //Log.d("hii", String.valueOf(x[0]));
+            for(int j = 0; j<x.length;j++){
+
+                if(lowestV > x[j]){
+                    lowestV = x[j];
+                    lowest = j;
+                }
+
+            }
+            Log.d("hii", String.valueOf(lowestV));
+
+            Log.d("hii", String.valueOf(lowest));
+            try {
+                jsonOb2 = MainActivity.testCenters.getName(lowest);
+                nameof = jsonOb2.getString("USER_Name");
+            }catch(JSONException e) {
+                e.printStackTrace();
+            }
+            Log.d("hiiiii", nameof);
         }
     }
 }

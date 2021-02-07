@@ -25,4 +25,13 @@ public class TestCenters {
         }
         return  coordinateJson;
     }
+    public JSONObject getName(int number) {
+        JSONObject nameJson;
+        try {
+            nameJson = (JSONObject) ((JSONObject) locations.get(number)).get("attributes");
+        } catch (JSONException e) {
+            nameJson = new JSONObject();
+        }
+        return  nameJson;
+    }
 }
