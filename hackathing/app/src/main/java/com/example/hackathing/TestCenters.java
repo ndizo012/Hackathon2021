@@ -35,25 +35,34 @@ public class TestCenters {
             nameJson = (JSONObject) ((JSONObject) locations.get(number)).get("attributes");
             names = nameJson.getString("USER_Name");
         } catch (JSONException e) {
-            nameJson = new JSONObject();
             names = new String();
         }
         return  names;
     }
+
+    public String getProvince(int number) {
+        JSONObject nameJson;
+        try {
+            nameJson = (JSONObject) ((JSONObject) locations.get(number)).get("attributes");
+            return nameJson.getString("USER_Prov");
+        } catch (JSONException e) {
+            return "Not Available";
+        }
+    }
+
     public String getNumber(int number) {
         JSONObject numberJson;
         String numbers="";
         try {
             numberJson = (JSONObject) ((JSONObject) locations.get(number)).get("attributes");
-            if(numberJson.getString("USER_Phone").equals("null")){
+            if(numberJson.getString("USER_Phone").equals("null") || numberJson.getString("USER_Phone").length() == 0){
                 numbers = "Not Available";
             }else{
                 numbers = numberJson.getString("USER_Phone");
             }
 
         } catch (JSONException e) {
-            numberJson = new JSONObject();
-            numbers = new String();
+            numbers = "Not Available";
         }
         return  numbers;
     }
@@ -73,7 +82,6 @@ public class TestCenters {
             pos = addressJson.getString("USER_PostalCode");
             address = st+", "+city+", "+prov+", "+pos;
         } catch (JSONException e) {
-            addressJson = new JSONObject();
             address = new String();
         }
         return  address;
@@ -91,7 +99,7 @@ public class TestCenters {
             if(day.equals("Thu")){
                 day = "Thur";
             }
-            if(hopJson.getString("USER_" + day).equals("null")) {
+            if(hopJson.getString("USER_" + day).equals("null") || hopJson.getString("USER_" + day).length() == 0) {
                 return "Not Available";
             }else {
                 return hopJson.getString("USER_" + day);

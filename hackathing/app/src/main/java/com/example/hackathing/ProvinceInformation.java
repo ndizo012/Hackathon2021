@@ -6,84 +6,69 @@ import org.json.JSONObject;
 
 public class ProvinceInformation {
     private JSONArray provinceInformation;
-    public enum Province {
-        Alberta,
-        BritishColumbia,
-        Manitoba,
-        NewBrunswick,
-        NewfoundlandAndLabrador,
-        NorthwestTerritories,
-        NovaScotia,
-        Nunavut,
-        Ontario,
-        PrinceEdwardIsland,
-        Quebec,
-        Saskatchewan,
-        Yukon
-    }
 
     public ProvinceInformation(JSONArray provinceInformation){
         this.provinceInformation = provinceInformation;
     }
 
-    private int enumToInt(Province province){
+    private int stringToInt(String province){
         int result;
         switch(province){
-            case Alberta:
+            case "AB":
                 return 0;
-            case BritishColumbia:
+            case "BC":
                 return 1;
-            case Manitoba:
+            case "MB":
                 return 2;
-            case NewBrunswick:
+            case "NB":
                 return 3;
-            case NewfoundlandAndLabrador:
+            case "NL":
                 return 4;
-            case NorthwestTerritories:
+            case "NT":
                 return 5;
-            case NovaScotia:
+            case "NS":
                 return 6;
-            case Nunavut:
+            case "NU":
                 return 7;
-            case Ontario:
+            case "ON":
                 return 8;
-            case PrinceEdwardIsland:
+            case "PE":
                 return 9;
-            case Quebec:
+            case "QC":
                 return 10;
-            case Saskatchewan:
+            case "SK":
                 return 11;
-            case Yukon:
+            case "YT":
                 return 12;
             default:
                 return 13;
         }
     }
 
-    public int getCumulativeCases(Province province) {
+    public String getCumulativeCases(String province) {
         try {
-            return (int) ((JSONObject) provinceInformation.get(enumToInt(province))).get("cumulative_cases");
+            return String.valueOf((Number) ((JSONObject) provinceInformation.get(stringToInt(province))).get("cumulative_cases"));
         } catch (JSONException e) {
             e.printStackTrace();
-            return -1;
+            return "Not Available";
         }
     }
 
-    public int getActiveCases(Province province) {
+    public String getActiveCases(String province) {
         try {
-            return (int) ((JSONObject) provinceInformation.get(enumToInt(province))).get("active_cases");
+            return String.valueOf((Number) ((JSONObject) provinceInformation.get(stringToInt(province))).get("active_cases"));
         } catch (JSONException e) {
             e.printStackTrace();
-            return -1;
+            return "Not Available";
         }
     }
 
-    public int getRecovered(Province province) {
+    public String getRecovered(String province) {
         try {
-            return (int) ((JSONObject) provinceInformation.get(enumToInt(province))).get("recovered");
+            return String.valueOf((Number) ((JSONObject) provinceInformation.get(stringToInt(province))).get("recovered"));
         } catch (JSONException e) {
             e.printStackTrace();
-            return -1;
+            return "Not Available";
         }
     }
 }

@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         searchButton.setEnabled(false);
         searchGoogleMap.setEnabled(false);
         previousButton.setEnabled(false);
+        nextButton.setEnabled(false);
 
 
         // Instantiate the RequestQueue and make api calls for information
@@ -112,8 +113,10 @@ public class MainActivity extends AppCompatActivity {
                     counter++;
                     clinicInfo.clear();
                     reloadList();
+                    populateProvinceInformation();
 
                     adapterClinicInfo.notifyDataSetChanged();
+                    adapterStats.notifyDataSetChanged();
                     previousButton.setEnabled(true);
                 }
             }
@@ -129,9 +132,15 @@ public class MainActivity extends AppCompatActivity {
                     counter--;
                     clinicInfo.clear();
                     reloadList();
+                    populateProvinceInformation();
 
                     adapterClinicInfo.notifyDataSetChanged();
+                    adapterStats.notifyDataSetChanged();
                     nextButton.setEnabled(true);
+
+                    if (counter == 1) {
+                        previousButton.setEnabled(false);
+                    }
                 }
             }
         });
@@ -211,13 +220,11 @@ public class MainActivity extends AppCompatActivity {
             lowest = ind[0];
             finalind = Arrays.copyOfRange(ind,0,9);
             finalDis = Arrays.copyOfRange(xdis,0,9);
-//
-//            Log.d("namee", MainActivity.testCenters.getName(finalind[0]));
-//            Log.d("namee", MainActivity.testCenters.getAddress(finalind[0]));
-//            Log.d("namee", MainActivity.testCenters.getHOP(finalind[0]));
-//            Log.d("namee", MainActivity.testCenters.getNumber(finalind[0]));
 
-
+           Log.d("namee", MainActivity.testCenters.getName(finalind[0]));
+           Log.d("namee", MainActivity.testCenters.getAddress(finalind[0]));
+           Log.d("namee", MainActivity.testCenters.getHOP(finalind[0]));
+           Log.d("namee", MainActivity.testCenters.getNumber(finalind[0]));
 
         } catch (IOException e) {
             // handle exception
@@ -225,15 +232,15 @@ public class MainActivity extends AppCompatActivity {
         }
         nameof =  MainActivity.testCenters.getName(finalind[0]);
         addre = MainActivity.testCenters.getAddress(finalind[0]);
+        counter = 0;
+
+        searchGoogleMap.setEnabled(true);
+        nextButton.setEnabled(true);
 
         reloadList();
-
-
-
-
-
-
+        populateProvinceInformation();
     }
+
     public void reloadList (){
 
 
@@ -248,13 +255,6 @@ public class MainActivity extends AppCompatActivity {
 
         clinicInfo.add(day + "'s Working Hour: " + hours);
         clinicInfo.add("Phone #: " + num);
-
-        searchGoogleMap.setEnabled(true);
-        previousButton.setEnabled(true);
-        nextButton.setEnabled(true);
-
-
-
     }
 
     public void OnOpenInGoogleMaps (View view) {
@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
     private static class provinceInfoRequest extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String url = "https://opencovid.ca/api/";
+            String url = "https://api.opencovid.ca/summary";
             String output;
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
 
@@ -330,5 +330,12 @@ public class MainActivity extends AppCompatActivity {
             //Put everything to do with accessing TestCenters here
             MainActivity.searchButton.setEnabled(true);
         }
+    }
+
+    public void populateProvinceInformation() {
+        localStats.clear();
+        localStats.add("Active Cases: " + provinceInformation.getActiveCases(testCenters.getProvince(finalind[counter])));
+        localStats.add("Cumulative Cases: " + provinceInformation.getCumulativeCases(testCenters.getProvince(finalind[counter])));
+        localStats.add("Recovered: " + provinceInformation.getRecovered(testCenters.getProvince(finalind[counter])));
     }
 }

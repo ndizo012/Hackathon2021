@@ -23,7 +23,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="25dp" />
+            android:layout_height="11dp" />
 
         <EditText
             android:id="@+id/addr"
@@ -36,7 +36,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="25dp" />
+            android:layout_height="13dp" />
 
         <Button
             android:id="@+id/searchButton"
@@ -65,7 +65,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="15dp" />
+            android:layout_height="13dp" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -105,7 +105,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="25dp" />
+            android:layout_height="11dp" />
 
         <TextView
             android:id="@+id/textView2"
