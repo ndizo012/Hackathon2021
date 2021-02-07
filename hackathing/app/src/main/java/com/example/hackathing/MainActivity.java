@@ -138,9 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     adapterStats.notifyDataSetChanged();
                     nextButton.setEnabled(true);
 
-                    if (counter == 1) {
-                        previousButton.setEnabled(false);
-                    }
+
                 }
             }
         });
